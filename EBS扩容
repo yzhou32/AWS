@@ -3,6 +3,8 @@
     2. 使用SSH远程连接
     3. lsblk查看实例上的卷
     4. "sudo growpart /dev/nvme0n1 1"  命令在根卷上扩展分区, “1”是分区号, 
+    5. df -h
+    6. xfs_growfs -d /
     ref： https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
     ref2: https://blog.csdn.net/kepa520/article/details/78919876
     
