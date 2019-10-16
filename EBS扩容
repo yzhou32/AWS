@@ -1,0 +1,20 @@
+### Amazon linux
+    1. 先在AWS console上修改EBS卷大小
+    2. 使用SSH远程连接
+    3. lsblk查看实例上的卷
+    4. "sudo growpart /dev/nvme0n1 1"  命令在根卷上扩展分区, “1”是分区号, 
+    ref： https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
+    ref2: https://blog.csdn.net/kepa520/article/details/78919876
+    
+### 自己的AMI启动EC2实例
+    1. yum install epel-release
+    2. 安装 growpart 或者 xfsprogs 扩容格式化工具
+        【CentOS 7、Aliyun Linux】
+        yum install cloud-utils-growpart 
+        yum install xfsprogs
+        
+        【Ubuntu 14、Ubuntu 16、Ubuntu 18、Debian 9：】
+        apt install cloud-guest-utils
+        apt install xfsprogs
+    3. growpart /dev/xvda 2
+    ref： https://www.china3.cn/server/unix/3723.html
