@@ -1,4 +1,66 @@
 ### Amazon linux
+=====未修改EBS前 
+[root@ip-192-168-2-37 ec2-user]# lsblk
+NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+nvme0n1       259:0    0   8G  0 disk
+├─nvme0n1p1   259:1    0   8G  0 part /
+└─nvme0n1p128 259:2    0   1M  0 part
+
+[root@ip-192-168-2-37 ec2-user]# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        214M     0  214M   0% /dev
+tmpfs           231M     0  231M   0% /dev/shm
+tmpfs           231M  392K  231M   1% /run
+tmpfs           231M     0  231M   0% /sys/fs/cgroup
+/dev/nvme0n1p1  8.0G  1.3G  6.8G  16% /
+tmpfs            47M     0   47M   0% /run/user/1000
+
+=====修改EBS后
+[root@ip-192-168-2-37 ec2-user]# lsblk
+NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+nvme0n1       259:0    0  20G  0 disk
+├─nvme0n1p1   259:1    0   8G  0 part /
+└─nvme0n1p128 259:2    0   1M  0 part
+[root@ip-192-168-2-37 ec2-user]# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        214M     0  214M   0% /dev
+tmpfs           231M     0  231M   0% /dev/shm
+tmpfs           231M  392K  231M   1% /run
+tmpfs           231M     0  231M   0% /sys/fs/cgroup
+/dev/nvme0n1p1  8.0G  1.3G  6.8G  16% /
+tmpfs            47M     0   47M   0% /run/user/1000
+
+=====运行 growpart 命令后
+[root@ip-192-168-2-37 ec2-user]# lsblk
+NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+nvme0n1       259:0    0  20G  0 disk
+├─nvme0n1p1   259:1    0  20G  0 part /
+└─nvme0n1p128 259:2    0   1M  0 part
+[root@ip-192-168-2-37 ec2-user]# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        214M     0  214M   0% /dev
+tmpfs           231M     0  231M   0% /dev/shm
+tmpfs           231M  392K  231M   1% /run
+tmpfs           231M     0  231M   0% /sys/fs/cgroup
+/dev/nvme0n1p1  8.0G  1.3G  6.8G  16% /
+tmpfs            47M     0   47M   0% /run/user/1000
+
+=====运行 xfs_growfs命令后
+[root@ip-192-168-2-37 ec2-user]# lsblk
+NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+nvme0n1       259:0    0  20G  0 disk
+├─nvme0n1p1   259:1    0  20G  0 part /
+└─nvme0n1p128 259:2    0   1M  0 part
+[root@ip-192-168-2-37 ec2-user]# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        214M     0  214M   0% /dev
+tmpfs           231M     0  231M   0% /dev/shm
+tmpfs           231M  392K  231M   1% /run
+tmpfs           231M     0  231M   0% /sys/fs/cgroup
+/dev/nvme0n1p1   20G  1.3G   19G   7% /
+tmpfs            47M     0   47M   0% /run/user/1000
+
+
     1. 先在AWS console上修改EBS卷大小
     2. 使用SSH远程连接
     3. lsblk查看实例上的卷
