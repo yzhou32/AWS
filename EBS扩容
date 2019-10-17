@@ -1,11 +1,24 @@
 ### Amazon linux
+    1. 先在AWS console上修改EBS卷大小
+    2. 使用SSH远程连接
+    3. lsblk查看实例上的卷
+    4. "sudo growpart /dev/nvme0n1 1"  命令在根卷上扩展分区, “1”是分区号, 
+    5. df -h
+    6. xfs_growfs -d /
+    ref： https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
+    ref2: https://blog.csdn.net/kepa520/article/details/78919876
+    
+    邱：
+    1. console手动操作，修改的是卷大小
+    2. growpart  做的是卷上的分区扩展
+    3. 最后xfs_growfs 做的是文件系统的扩展
+
 =====未修改EBS前 
 [root@ip-192-168-2-37 ec2-user]# lsblk
 NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
 nvme0n1       259:0    0   8G  0 disk
 ├─nvme0n1p1   259:1    0   8G  0 part /
 └─nvme0n1p128 259:2    0   1M  0 part
-
 [root@ip-192-168-2-37 ec2-user]# df -h
 Filesystem      Size  Used Avail Use% Mounted on
 devtmpfs        214M     0  214M   0% /dev
@@ -61,17 +74,9 @@ tmpfs           231M     0  231M   0% /sys/fs/cgroup
 tmpfs            47M     0   47M   0% /run/user/1000
 
 
-    1. 先在AWS console上修改EBS卷大小
-    2. 使用SSH远程连接
-    3. lsblk查看实例上的卷
-    4. "sudo growpart /dev/nvme0n1 1"  命令在根卷上扩展分区, “1”是分区号, 
-    5. df -h
-    6. xfs_growfs -d /
-    ref： https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
-    ref2: https://blog.csdn.net/kepa520/article/details/78919876
     
 ### 自己的AMI启动EC2实例
-    1. yum install epel-release
+    ###1. yum install epel-release
     2. 安装 growpart 或者 xfsprogs 扩容格式化工具
         【CentOS 7、Aliyun Linux】
         yum install cloud-utils-growpart 
@@ -81,4 +86,62 @@ tmpfs            47M     0   47M   0% /run/user/1000
         apt install cloud-guest-utils
         apt install xfsprogs
     3. growpart /dev/xvda 2
-    ref： https://www.china3.cn/server/unix/3723.html
+    ref1： https://www.china3.cn/server/unix/3723.html
+    ref2： https://www.lianst.com/3583.html
+
+===== 未修改EBS前
+[root@ip-192-168-2-206 centos]# lsblk
+NAME                MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+xvda                202:0    0   16G  0 disk
+├─xvda1             202:1    0    1G  0 part /boot
+└─xvda2             202:2    0   15G  0 part
+  ├─cl_centos7-root 253:0    0 13.4G  0 lvm  /
+  └─cl_centos7-swap 253:1    0  1.6G  0 lvm  [SWAP]
+[root@ip-192-168-2-206 centos]# df -h
+Filesystem                   Size  Used Avail Use% Mounted on
+/dev/mapper/cl_centos7-root   14G  1.4G   13G  10% /
+devtmpfs                     484M     0  484M   0% /dev
+tmpfs                        495M     0  495M   0% /dev/shm
+tmpfs                        495M  6.7M  489M   2% /run
+tmpfs                        495M     0  495M   0% /sys/fs/cgroup
+/dev/xvda1                  1014M  171M  844M  17% /boot
+tmpfs                         99M     0   99M   0% /run/user/1000
+
+===== 修改EBS后
+[root@ip-192-168-2-206 centos]# lsblk
+NAME                MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+xvda                202:0    0   30G  0 disk
+├─xvda1             202:1    0    1G  0 part /boot
+└─xvda2             202:2    0   15G  0 part
+  ├─cl_centos7-root 253:0    0 13.4G  0 lvm  /
+  └─cl_centos7-swap 253:1    0  1.6G  0 lvm  [SWAP]
+[root@ip-192-168-2-206 centos]# df -h
+Filesystem                   Size  Used Avail Use% Mounted on
+/dev/mapper/cl_centos7-root   14G  1.4G   13G  10% /
+devtmpfs                     484M     0  484M   0% /dev
+tmpfs                        495M     0  495M   0% /dev/shm
+tmpfs                        495M  6.7M  489M   2% /run
+tmpfs                        495M     0  495M   0% /sys/fs/cgroup
+/dev/xvda1                  1014M  171M  844M  17% /boot
+tmpfs                         99M     0   99M   0% /run/user/1000
+
+=====运行 growpart 命令后
+[root@ip-192-168-2-206 centos]# lsblk
+NAME                MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+xvda                202:0    0   30G  0 disk
+├─xvda1             202:1    0    1G  0 part /boot
+└─xvda2             202:2    0   29G  0 part
+  ├─cl_centos7-root 253:0    0 13.4G  0 lvm  /
+  └─cl_centos7-swap 253:1    0  1.6G  0 lvm  [SWAP]
+[root@ip-192-168-2-206 centos]# df -h
+Filesystem                   Size  Used Avail Use% Mounted on
+/dev/mapper/cl_centos7-root   14G  1.4G   13G  11% /
+devtmpfs                     484M     0  484M   0% /dev
+tmpfs                        495M     0  495M   0% /dev/shm
+tmpfs                        495M  6.8M  488M   2% /run
+tmpfs                        495M     0  495M   0% /sys/fs/cgroup
+/dev/xvda1                  1014M  171M  844M  17% /boot
+tmpfs                         99M     0   99M   0% /run/user/1000
+tmpfs                         99M     0   99M   0% /run/user/0
+
+
