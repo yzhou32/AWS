@@ -1,10 +1,11 @@
-### Amazon linux
+##### Amazon linux
+!!!!所有操作前先  AMI  !!!!!!
     1. 先在AWS console上修改EBS卷大小
     2. 使用SSH远程连接
     3. lsblk查看实例上的卷
     4. "sudo growpart /dev/nvme0n1 1"  命令在根卷上扩展分区, “1”是分区号, 
     5. df -h
-    6. xfs_growfs -d /
+    6. xfs_growfs -d /    &&&///   reboot
     ref： https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
     ref2: https://blog.csdn.net/kepa520/article/details/78919876
     
@@ -13,69 +14,16 @@
     2. growpart  做的是卷上的分区扩展
     3. 最后xfs_growfs 做的是文件系统的扩展
 
-=====未修改EBS前 
-[root@ip-192-168-2-37 ec2-user]# lsblk
-NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
-nvme0n1       259:0    0   8G  0 disk
-├─nvme0n1p1   259:1    0   8G  0 part /
-└─nvme0n1p128 259:2    0   1M  0 part
-[root@ip-192-168-2-37 ec2-user]# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-devtmpfs        214M     0  214M   0% /dev
-tmpfs           231M     0  231M   0% /dev/shm
-tmpfs           231M  392K  231M   1% /run
-tmpfs           231M     0  231M   0% /sys/fs/cgroup
-/dev/nvme0n1p1  8.0G  1.3G  6.8G  16% /
-tmpfs            47M     0   47M   0% /run/user/1000
 
-=====修改EBS后
-[root@ip-192-168-2-37 ec2-user]# lsblk
-NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
-nvme0n1       259:0    0  20G  0 disk
-├─nvme0n1p1   259:1    0   8G  0 part /
-└─nvme0n1p128 259:2    0   1M  0 part
-[root@ip-192-168-2-37 ec2-user]# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-devtmpfs        214M     0  214M   0% /dev
-tmpfs           231M     0  231M   0% /dev/shm
-tmpfs           231M  392K  231M   1% /run
-tmpfs           231M     0  231M   0% /sys/fs/cgroup
-/dev/nvme0n1p1  8.0G  1.3G  6.8G  16% /
-tmpfs            47M     0   47M   0% /run/user/1000
 
-=====运行 growpart 命令后
-[root@ip-192-168-2-37 ec2-user]# lsblk
-NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
-nvme0n1       259:0    0  20G  0 disk
-├─nvme0n1p1   259:1    0  20G  0 part /
-└─nvme0n1p128 259:2    0   1M  0 part
-[root@ip-192-168-2-37 ec2-user]# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-devtmpfs        214M     0  214M   0% /dev
-tmpfs           231M     0  231M   0% /dev/shm
-tmpfs           231M  392K  231M   1% /run
-tmpfs           231M     0  231M   0% /sys/fs/cgroup
-/dev/nvme0n1p1  8.0G  1.3G  6.8G  16% /
-tmpfs            47M     0   47M   0% /run/user/1000
-
-=====运行 xfs_growfs命令后
-[root@ip-192-168-2-37 ec2-user]# lsblk
-NAME          MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
-nvme0n1       259:0    0  20G  0 disk
-├─nvme0n1p1   259:1    0  20G  0 part /
-└─nvme0n1p128 259:2    0   1M  0 part
-[root@ip-192-168-2-37 ec2-user]# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-devtmpfs        214M     0  214M   0% /dev
-tmpfs           231M     0  231M   0% /dev/shm
-tmpfs           231M  392K  231M   1% /run
-tmpfs           231M     0  231M   0% /sys/fs/cgroup
-/dev/nvme0n1p1   20G  1.3G   19G   7% /
-tmpfs            47M     0   47M   0% /run/user/1000
+#####  Marketplace上 Centos7
+    1. df -h  
+    2. sudo growpart /dev/xvda 1
+    3. xfs_growfs -d /
 
 
     
-### 自己的AMI启动EC2实例
+##### 自己的AMI启动EC2实例
     ###1. yum install epel-release
     2. 安装 growpart 或者 xfsprogs 扩容格式化工具
         【CentOS 7、Aliyun Linux】
@@ -86,62 +34,40 @@ tmpfs            47M     0   47M   0% /run/user/1000
         apt install cloud-guest-utils
         apt install xfsprogs
     3. growpart /dev/xvda 2
+    ###  [pvs  /  pvdisplay  /  vgextend  / ]
+    4. pvresize -v /dev/xvda2
+    5. lvextend -l +100%FREE /dev/mapper/cl_centos7-root
+    6. xfs_growfs -d /
     ref1： https://www.china3.cn/server/unix/3723.html
     ref2： https://www.lianst.com/3583.html
 
-===== 未修改EBS前
-[root@ip-192-168-2-206 centos]# lsblk
-NAME                MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-xvda                202:0    0   16G  0 disk
-├─xvda1             202:1    0    1G  0 part /boot
-└─xvda2             202:2    0   15G  0 part
-  ├─cl_centos7-root 253:0    0 13.4G  0 lvm  /
-  └─cl_centos7-swap 253:1    0  1.6G  0 lvm  [SWAP]
-[root@ip-192-168-2-206 centos]# df -h
-Filesystem                   Size  Used Avail Use% Mounted on
-/dev/mapper/cl_centos7-root   14G  1.4G   13G  10% /
-devtmpfs                     484M     0  484M   0% /dev
-tmpfs                        495M     0  495M   0% /dev/shm
-tmpfs                        495M  6.7M  489M   2% /run
-tmpfs                        495M     0  495M   0% /sys/fs/cgroup
-/dev/xvda1                  1014M  171M  844M  17% /boot
-tmpfs                         99M     0   99M   0% /run/user/1000
 
-===== 修改EBS后
-[root@ip-192-168-2-206 centos]# lsblk
-NAME                MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-xvda                202:0    0   30G  0 disk
-├─xvda1             202:1    0    1G  0 part /boot
-└─xvda2             202:2    0   15G  0 part
-  ├─cl_centos7-root 253:0    0 13.4G  0 lvm  /
-  └─cl_centos7-swap 253:1    0  1.6G  0 lvm  [SWAP]
-[root@ip-192-168-2-206 centos]# df -h
-Filesystem                   Size  Used Avail Use% Mounted on
-/dev/mapper/cl_centos7-root   14G  1.4G   13G  10% /
-devtmpfs                     484M     0  484M   0% /dev
-tmpfs                        495M     0  495M   0% /dev/shm
-tmpfs                        495M  6.7M  489M   2% /run
-tmpfs                        495M     0  495M   0% /sys/fs/cgroup
-/dev/xvda1                  1014M  171M  844M  17% /boot
-tmpfs                         99M     0   99M   0% /run/user/1000
 
-=====运行 growpart 命令后
-[root@ip-192-168-2-206 centos]# lsblk
-NAME                MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-xvda                202:0    0   30G  0 disk
-├─xvda1             202:1    0    1G  0 part /boot
-└─xvda2             202:2    0   29G  0 part
-  ├─cl_centos7-root 253:0    0 13.4G  0 lvm  /
-  └─cl_centos7-swap 253:1    0  1.6G  0 lvm  [SWAP]
-[root@ip-192-168-2-206 centos]# df -h
-Filesystem                   Size  Used Avail Use% Mounted on
-/dev/mapper/cl_centos7-root   14G  1.4G   13G  11% /
-devtmpfs                     484M     0  484M   0% /dev
-tmpfs                        495M     0  495M   0% /dev/shm
-tmpfs                        495M  6.8M  488M   2% /run
-tmpfs                        495M     0  495M   0% /sys/fs/cgroup
-/dev/xvda1                  1014M  171M  844M  17% /boot
-tmpfs                         99M     0   99M   0% /run/user/1000
-tmpfs                         99M     0   99M   0% /run/user/0
+##### LVM
+1. LVM简介
+    LVM是 Logical Volume Manager(逻辑卷管理)的简写，它由Heinz Mauelshagen在Linux 2.4内核上实现
+    LVM将一个或多个硬盘的分区在逻辑上集合，相当于一个大硬盘来使用，
+    当硬盘的空间不够使用的时候，可以继续将其它的硬盘的分区加入其中，
+    这样可以实现磁盘空间的动态管理，相对于普通的磁盘分区有很大的灵活性。
+2. LVM相关术语
+    物理存储介质（The physical media）：
+        这里指系统的存储设备：硬盘，如：/dev/hda1、/dev/sda等等，是存储系统最低层的存储单元。
+    PV物理卷（physical volume）：
+        物理卷就是指硬盘分区或从逻辑上与磁盘分区具有同样功能的设备(如RAID)，
+        是LVM的基本存储逻辑块，但和基本的物理存储介质（如分区、磁盘等）比较，却包含有与LVM相关的管理参数。
+    VG卷组（Volume Group）：
+        LVM卷组类似于非LVM系统中的物理硬盘，其由物理卷组成。可以在卷组上创建一个或多个“LVM分区”（逻辑卷），LVM卷组由一个或多个物理卷组成。
+    LV逻辑卷（logical volume）：
+        LVM的逻辑卷类似于非LVM系统中的硬盘分区，在逻辑卷之上可以建立文件系统(比如/home或者/usr等)。
+    PE（physical extent）：
+        每一个物理卷被划分为称为PE(Physical Extents)的基本单元，具有唯一编号的PE是可以被LVM寻址的最小单元。PE的大小是可配置的，默认为4MB。
+    LE（logical extent）：
+        逻辑卷也被划分为被称为LE(Logical Extents) 的可被寻址的基本单位。在同一个卷组中，LE的大小和PE是相同的，并且一一对应。
+    ======
+    PV:是物理的磁盘分区
+    VG:LVM中的物理的磁盘分区，也就是PV，必须加入VG，可以将VG理解为一个仓库或者是几个大的硬盘。
+    LV：也就是从VG中划分的逻辑分区
 
+从小到大
+EBS (物理设备)  --  PV  --  VG  --  LV  --  XFS/EXT4
 
