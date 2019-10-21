@@ -1,1 +1,37 @@
-windows操作系统下，用 CloudWatch 安装Agent 监控内存memory
+##### 用 CloudWatch 安装Agent 监控内存memory
+Amazon Linux ref: https://aws.amazon.com/cn/blogs/china/cloudwatch-agent-in-cloudwatch-ec2-rom/
+ref官方文档示例: https://docs.amazonaws.cn/AmazonCloudWatch/latest/monitoring/download-cloudwatch-agent-commandline.html
+ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aws-cloudwatch-for-windows-instance
+
+### Windows
+  1. aws console上获取登陆密码
+  2. 远程桌面win + r： mstsc
+  3. 下载msi文件
+        https://s3.cn-north-1.amazonaws.com.cn/amazoncloudwatch-agent/windows/amd64/latest/amazon-cloudwatch-agent.msi
+  4. 安装Cloudwatch代理安装包： msiexec /i amazon-cloudwatch-agent.msi
+  5. 创建IAMrole： 
+
+
+### Linux
+  1. 建立IAM Policy: CloudWatchAgentAdminPolicy  &&&  AmazonEC2RoleforSSM
+  2. 安装Cloudwatch Agent
+      a. 启动EC2实例
+          选择IAM role
+          在高级详细信息中写入：
+          #!/bin/bash
+          yum update -y amazon-ssm-agent
+          yum -y install collectd
+      b. 安装Cloudwatch Agent
+          在AWS System Manager的Managed Instances中，选择run command
+          选择AWS-ConfigureAWSPackage
+          在名称 中输入 AmazonCloudWatchAgent
+          最后点击运行
+  3. 通过SSH登陆EC2
+  4. 配置需要通过Cloudwatch进行监控的指标
+      sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+          选择cwagent、standard、/var/log/messages
+  5. 配置文件以json格式存放在本地，并可以进行编辑
+      /opt/aws/amazon-cloudwatch-agent/bin/config.json
+  6. 启动Cloudwatch Agent服务
+      sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-linux -s
+      ps aux | grep cloudwatch-agent
