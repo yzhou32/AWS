@@ -1,0 +1,9 @@
+##### Security Group
+
+### Inbound
+TCP 22 允许从您的网络中的 IPv4 IP 地址对 Linux 实例进行入站 SSH 访问 (通过 Internet 网关)
+TCP 3389 允许从您的网络中的 IPv4 IP 地址对 Windows 实例进行入站 RDP 访问 (通过 Internet 网关)
+ 
+### Outbound
+TCP 1433  允许 Microsoft SQL Server 出站访问指定安全组中的实例
+TCP 3306 	允许 MySQL 出站访问指定安全组中的实例
