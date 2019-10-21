@@ -10,6 +10,18 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
         https://s3.cn-north-1.amazonaws.com.cn/amazoncloudwatch-agent/windows/amd64/latest/amazon-cloudwatch-agent.msi
   4. 安装Cloudwatch代理安装包： msiexec /i amazon-cloudwatch-agent.msi
   5. 创建IAMrole： 
+  
+  https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe
+  or
+  https://amazon-ssm-cn-northwest-1.s3.amazonaws.com/latest/windows_amd64/AmazonSSMAgentSetup.exe
+  
+  创建 CloudWatch 代理配置文件
+  cd "C:\Program Files\Amazon\AmazonCloudWatchAgent"
+  amazon-cloudwatch-agent-config-wizard.exe
+  
+  启动Cloudwatch Agent服务
+  ./amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -m ec2 -c file:configuration-file-path -s
+  ref：https://docs.amazonaws.cn/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html
 
 
 ### Linux
@@ -35,3 +47,4 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
   6. 启动Cloudwatch Agent服务
       sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-linux -s
       ps aux | grep cloudwatch-agent
+  
