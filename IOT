@@ -18,3 +18,12 @@
     
 
 4. 没有一蹴而就的成功
+
+
+##### Greengrass 深度解析
+    边缘计算产品
+    是软件，非硬件：
+    由两个主要组件构成：1. Greengrass Core 2. IOT Device SDK: 设备使用与GG Core交互（C/C++/Python/JS)
+    
+    机器学习：训练阶段、推理阶段
+     
