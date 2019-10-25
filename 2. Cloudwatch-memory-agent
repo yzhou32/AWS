@@ -17,7 +17,11 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
   7. 在powershell上，启动Cloudwatch Agent服务
     cd 'C:\Program Files\Amazon\AmazonCloudWatchAgent\'
      .\amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-windows -s
- 
+     .\amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -m ec2 -c file:'C:\Program Files\Amazon\AmazonCloudWatchAgent\config.json' -s
+     
+  8. 修改配置文件
+      C:\Program Files\Amazon\AmazonCloudWatchAgent\config.json 
+      tianjia
  ref：https://docs.amazonaws.cn/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html
 
 ### Linux
@@ -43,5 +47,19 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
   6. 启动Cloudwatch Agent服务
       sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-linux -s
       ps aux | grep cloudwatch-agent
+  7. 是否开机自启
+      默认自启
   
+  查看系统内存 free -m
+  查看服务状态  systemctl status
+  
+  
+  ###### 模拟消耗内存
+        压测软件
+        ELB-ASG[设定策略，cpu，mem]
+ ######  收集EC2上日志
+ windows / Linux
+ 日志：保存期限【默认多久】；数据存在哪里
+ 
+ 
  
