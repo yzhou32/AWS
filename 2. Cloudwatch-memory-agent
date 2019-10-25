@@ -44,3 +44,4 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
       sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-linux -s
       ps aux | grep cloudwatch-agent
   
+ 
