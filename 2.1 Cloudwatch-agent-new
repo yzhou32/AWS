@@ -39,6 +39,10 @@ ref Windows指标: https://blog.csdn.net/yenange/article/details/50905412
 ## 监控log
 在监控内存的步骤6中，同时配置log，配置同样存在config.json文件中，powershell更新后可在console找到log文件
 
+##压测
+jmeter
+
+
   
 ##### Linux
 
