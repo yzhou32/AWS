@@ -62,4 +62,78 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
  日志：保存期限【默认多久】；数据存在哪里
  
  
+ linux: https://blog.csdn.net/NICK1211/article/details/56013319
+ 
+###### config.json文件，包含memory&CPU 
+ {
+	"logs": {
+		"logs_collected": {
+			"windows_events": {
+				"collect_list": [
+					{
+						"event_format": "xml",
+						"event_levels": [
+							"VERBOSE",
+							"INFORMATION",
+							"WARNING",
+							"ERROR",
+							"CRITICAL"
+						],
+						"event_name": "System",
+						"log_group_name": "System",
+						"log_stream_name": "{instance_id}"
+					}
+				]
+			}
+		}
+	},
+	"metrics": {
+		"append_dimensions": {
+			"AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+			"ImageId": "${aws:ImageId}",
+			"InstanceId": "${aws:InstanceId}",
+			"InstanceType": "${aws:InstanceType}"
+		},
+		
+		"metrics_collected": {
+			"LogicalDisk": {
+				"measurement": [
+					"% Free Space"
+				],
+				"metrics_collection_interval": 60,
+				"resources": [
+					"*"
+				]
+			},
+			"Memory": {
+				"measurement": [
+					"Available Bytes"
+				],
+				"metrics_collection_interval": 60
+			},
+			"statsd": {
+				"metrics_aggregation_interval": 60,
+				"metrics_collection_interval": 10,
+				"service_address": ":8125"
+            },
+            "Processor":{
+                "measurement":[
+                    {"name": "% Idle Time", "rename": "CPU_IDLE", "unit": "Percent"},
+                    "% Interrupt Time",
+                    "% User Time",
+                    "% Processor Time"
+                ],
+                "metrics_collection_interval": 60,
+                "resources":[
+                    "*"
+                ],
+                "append_dimensions":{
+                    "d1": "win_foo",
+                    "d2": "win_bar"
+                }
+            }
+		}
+	}
+}
+ 
  
