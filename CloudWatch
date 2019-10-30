@@ -1,0 +1,43 @@
+###### ref
+ref Amazon Linux: https://aws.amazon.com/cn/blogs/china/cloudwatch-agent-in-cloudwatch-ec2-rom/
+ref官方文档示例: https://docs.amazonaws.cn/AmazonCloudWatch/latest/monitoring/download-cloudwatch-agent-commandline.html
+ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aws-cloudwatch-for-windows-instance
+ref Windows指标: https://blog.csdn.net/yenange/article/details/50905412
+
+
+##### Windows
+## 监控内存
+1. 创建EC2并附加IAMrole后 在aws console上获取登陆密码
+2. 远程桌面win + r： mstsc
+3. 下载msi文件
+  https://s3.cn-north-1.amazonaws.com.cn/amazoncloudwatch-agent/windows/amd64/latest/amazon-cloudwatch-agent.msi
+4. cd进入目录后，安装Cloudwatch代理安装包： msiexec /i amazon-cloudwatch-agent.msi
+5. 创建 CloudWatch 代理配置文件
+6. cd "C:\Program Files\Amazon\AmazonCloudWatchAgent"
+    amazon-cloudwatch-agent-config-wizard.exe
+7. 在powershell上，启动Cloudwatch Agent服务
+    cd 'C:\Program Files\Amazon\AmazonCloudWatchAgent\'
+8. 更新C:\Program Files\Amazon\AmazonCloudWatchAgent目录下的config.json文件
+  cd 'C:\Program Files\Amazon\AmazonCloudWatchAgent\'
+  .\amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -m ec2 -c file:'C:\Program Files\Amazon\AmazonCloudWatchAgent\config.json' -s
+   ### 更新ssm文件
+   .\amazon-cloudwatch-agent-ctl.ps1 -a fetch-config -m ec2 -c ssm:AmazonCloudWatch-windows -s
+9.  Windows内存指标：
+  Available Bytes : 显示出当前空闲的物理内存总量，它等于分配给待机(缓存的)、空闲和零分页列表内存的总和。
+  参考
+  "Memory": {
+        "metrics_collection_interval": 5,
+        "measurement": [
+          "Available Bytes",
+          "Cache Faults/sec",
+          "Page Faults/sec",
+          "Pages/sec"
+        ],
+        "append_dimensions": {
+          "d3": "win_bo"
+        }
+
+## 模拟内存消耗
+memtest
+
+
