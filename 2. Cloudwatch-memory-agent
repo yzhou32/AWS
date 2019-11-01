@@ -53,6 +53,7 @@ ref2: https://stackoverflow.com/questions/41330555/monitoring-memory-usage-in-aw
   查看系统内存 free -m
   查看服务状态  systemctl status
   
+  make 需要先安装 ggc
   
   ###### 模拟消耗内存
         压测软件
