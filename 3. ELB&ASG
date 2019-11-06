@@ -1,0 +1,12 @@
+要求：
+1. ELB+ASG+EC2  2-4台   
+2. 往ELB打流量 用apache ab工具   
+3. 50% + 2 30%-2
+
+#!/bin/bash
+yum -y install httpd php 
+chkconfig httpd on wget https://us-west-2-tcprod.s3.amazonaws.com/courses/ILT-TF-100-ARCHIT/v5.4.0/lab-2-ha/scripts/phpapp.zip 
+unzip phpapp.zip -d /var/www/html/ 
+service httpd start 
+
+
