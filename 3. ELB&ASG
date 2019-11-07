@@ -12,3 +12,5 @@ service httpd start
 移动文件
 mv 现有目录 目标目录
 
+apache ab： https://www.cnblogs.com/h--d/p/9903959.html
+
