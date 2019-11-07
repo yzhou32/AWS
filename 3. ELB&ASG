@@ -9,4 +9,6 @@ chkconfig httpd on wget https://us-west-2-tcprod.s3.amazonaws.com/courses/ILT-TF
 unzip phpapp.zip -d /var/www/html/ 
 service httpd start 
 
+移动文件
+mv 现有目录 目标目录
 
