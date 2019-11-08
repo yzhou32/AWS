@@ -14,3 +14,6 @@ mv 现有目录 目标目录
 
 apache ab： https://www.cnblogs.com/h--d/p/9903959.html
 
+yum -y install httpd-tools
+
+ab -c 5 -n 100 -t 600s  http://localhost/
