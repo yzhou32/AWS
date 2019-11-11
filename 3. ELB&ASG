@@ -9,6 +9,14 @@ chkconfig httpd on wget https://us-west-2-tcprod.s3.amazonaws.com/courses/ILT-TF
 unzip phpapp.zip -d /var/www/html/ 
 service httpd start 
 
+yum -y install httpd-tools
+ab -c 200 -n 10000 zy-clb-120545575.cn-northwest-1.elb.amazonaws.com.cn/
+
+
+
+
+
+
 移动文件
 mv 现有目录 目标目录
 
